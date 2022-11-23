@@ -7,7 +7,7 @@ namespace BeFriendr.Common
 {
     public class MessageQueueSettings
     {
-        public string Host { get; set; }
-        public string ProfilesEndPoint { get; set; }
+        public string Host { get; set; }       
+        public string UserProfilesEndPoint { get; set; }
     }
 }

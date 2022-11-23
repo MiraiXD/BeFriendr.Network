@@ -8,8 +8,8 @@ namespace BeFriendr.Network.UserProfiles.Requests
 {
     public class UploadPhotoRequest
     {
-        [Required]
-        public string UserName { get; set; }
+        // [Required]
+        // public string UserName { get; set; }
         [Required]
         public IFormFile File { get; set; }
     }

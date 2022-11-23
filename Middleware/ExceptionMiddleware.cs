@@ -14,6 +14,7 @@ namespace BeFriendr.Network.Middleware
             catch (Exception e)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                Console.Error.WriteLine(e.Message);
                 await context.Response.WriteAsync("Something went wrong");
             }
         }

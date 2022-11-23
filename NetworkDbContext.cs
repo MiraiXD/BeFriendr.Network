@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using BeFriendr.Network.UserProfiles.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace BeFriendr.Network.Data
+namespace BeFriendr.Network
 {
     public class NetworkDbContext : DbContext
     {

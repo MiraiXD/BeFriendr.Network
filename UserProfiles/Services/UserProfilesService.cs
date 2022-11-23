@@ -23,14 +23,11 @@ namespace BeFriendr.Network.UserProfiles.Services
         }
         public async Task<UserProfile> GetAsync(GetProfileRequest request)
         {
-            var userProfile = await _userProfilesRepository
+            return await _userProfilesRepository
             .AsQueryable()
             .Where(x => x.UserName == request.UserName)
             .Include(x => x.Photos)
             .FirstOrDefaultAsync();
-
-            if (userProfile == null) throw new UserProfileExceptions.Get.NotFoundException($"A profile with username: {request.UserName} has not been found");
-            else return userProfile;
         }
         public async Task<IEnumerable<UserProfile>> GetManyAsync(GetManyProfilesRequest request)
         {
@@ -54,16 +51,16 @@ namespace BeFriendr.Network.UserProfiles.Services
             return userProfile;
         }
 
-        public async Task DeleteAsync(DeleteProfileRequest request)
+        public async Task DeleteAsync(string userName, DeleteProfileRequest request)
         {
-            var userProfile = await _userProfilesRepository.GetByUserNameAsync(request.UserName);
-            if (userProfile == null) throw new UserProfileExceptions.Delete.NotFoundException($"User profile with user name: {request.UserName} does not exist. Cannot delete profile!");
+            var userProfile = await _userProfilesRepository.GetByUserNameAsync(userName);
+            if (userProfile == null) throw new UserProfileExceptions.Delete.NotFoundException($"User profile with user name: {userName} does not exist. Cannot delete profile!");
             _userProfilesRepository.Delete(userProfile.ID);
         }
-        public async Task<UserProfile> UpdateAsync(UpdateProfileRequest request)
+        public async Task<UserProfile> UpdateAsync(string userName, UpdateProfileRequest request)
         {
-            var userProfile = await _userProfilesRepository.GetByUserNameAsync(request.FindByUserName);
-            if (userProfile == null) throw new UserProfileExceptions.Update.NotFoundException($"User profile with user name: {request.FindByUserName} has not been found. Cannot update database!");
+            var userProfile = await _userProfilesRepository.GetByUserNameAsync(userName);
+            if (userProfile == null) throw new UserProfileExceptions.Update.NotFoundException($"User profile with user name: {userName} has not been found. Cannot update database!");
             if (await _userProfilesRepository.GetByUserNameAsync(request.UserName) != null) throw new UserProfileExceptions.Update.AlreadyExistsException($"User name: {request.UserName} is already taken ");
 
             userProfile = _mapper.Map<UpdateProfileRequest, UserProfile>(request, userProfile);

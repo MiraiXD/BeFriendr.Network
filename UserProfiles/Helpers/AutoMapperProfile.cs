@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using BeFriendr.Common.Messages;
 using BeFriendr.Network.UserProfiles.DTOs;
 using BeFriendr.Network.UserProfiles.Entities;
 using BeFriendr.Network.UserProfiles.Requests;
@@ -19,6 +20,7 @@ namespace BeFriendr.Network.UserProfiles.Helpers
             CreateMap<UpdateProfileRequest, UserProfile>();
             CreateMap<DeleteProfileRequest, UserProfile>();
             CreateMap<Photo, PhotoDto>();
+            CreateMap<AccountCreatedMessage, CreateProfileRequest>();
         }
     }
 }

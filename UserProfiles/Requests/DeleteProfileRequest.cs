@@ -8,7 +8,7 @@ namespace BeFriendr.Network.UserProfiles.Requests
 {
     public class DeleteProfileRequest
     {
-        [Required]
-        public string UserName { get; set; } // later replace by CLaimsPrincipal.UserName
+        // [Required]
+        // public string UserName { get; set; } // later replace by CLaimsPrincipal.UserName
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using BeFriendr.Network.UserProfiles.DTOs;
@@ -8,20 +9,23 @@ using BeFriendr.Network.UserProfiles.Entities;
 using BeFriendr.Network.UserProfiles.Interfaces;
 using BeFriendr.Network.UserProfiles.Requests;
 using BeFriendr.Network.UserProfiles.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BeFriendr.Network.UserProfiles.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize]    
+    [Authorize]    
     public class UserProfileController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IUserProfilesService _userProfileService;
         private readonly IPhotoService _photoService;
-        public UserProfileController(IMapper mapper, IUserProfilesService userProfileService, IPhotoService photoService)
+        private readonly UnitOfWork _unitOfWork;
+        public UserProfileController(IMapper mapper, IUserProfilesService userProfileService, IPhotoService photoService, UnitOfWork unitOfWork)
         {
+            _unitOfWork = unitOfWork;
             _photoService = photoService;
             _userProfileService = userProfileService;
             _mapper = mapper;
@@ -30,6 +34,7 @@ namespace BeFriendr.Network.UserProfiles.Controllers
         public async Task<ActionResult<GetProfileResponse>> GetByUserName([FromRoute] string userName)
         {
             var profile = await _userProfileService.GetAsync(new GetProfileRequest { UserName = userName });
+            if(profile == null) return NotFound();
             var profileDto = _mapper.Map<UserProfileDto>(profile);
             return Ok(new GetProfileResponse { UserProfileDto = profileDto });
         }
@@ -40,32 +45,37 @@ namespace BeFriendr.Network.UserProfiles.Controllers
             IEnumerable<UserProfileDto> profileDtos = _mapper.Map<IEnumerable<UserProfileDto>>(profiles);
             return Ok(new GetManyProfilesResponse { ProfileDtos = profileDtos.ToArray() });
         }
-        [HttpPost]
-        public async Task<ActionResult<CreateProfileResponse>> CreateAsync([FromBody] CreateProfileRequest request)
-        {
-            var profile = await _userProfileService.CreateAsync(request);
-            var profileDto = _mapper.Map<UserProfileDto>(profile);
-            return CreatedAtRoute(nameof(GetByUserName), new { userName = profile.UserName }, new CreateProfileResponse { UserProfileDto = profileDto });
-        }
+        // [HttpPost]
+        // public async Task<ActionResult<CreateProfileResponse>> CreateAsync([FromBody] CreateProfileRequest request)
+        // {
+        //     var profile = await _userProfileService.CreateAsync(request);
+        //     var profileDto = _mapper.Map<UserProfileDto>(profile);
+        //     return CreatedAtRoute(nameof(GetByUserName), new { userName = profile.UserName }, new CreateProfileResponse { UserProfileDto = profileDto });
+        // }
         [HttpPut]
         public async Task<ActionResult<UpdateProfileResponse>> UpdateAsync([FromBody] UpdateProfileRequest request)
         {
-            var profile = await _userProfileService.UpdateAsync(request);
+            string userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var profile = await _userProfileService.UpdateAsync(userName, request);
+            await _unitOfWork.SaveAllAsync();
             var profileDto = _mapper.Map<UserProfileDto>(profile);
             return Ok(new UpdateProfileResponse { UserProfileDto = profileDto });
         }
 
-        [HttpDelete("{userName}")]
-        public async Task<ActionResult> DeleteAsync([FromRoute] string userName)
+        [HttpDelete]
+        public async Task<ActionResult> DeleteAsync()
         {
-            await _userProfileService.DeleteAsync(new DeleteProfileRequest { UserName = userName });
+            string userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _userProfileService.DeleteAsync(userName, new DeleteProfileRequest());
+            await _unitOfWork.SaveAllAsync();
             return Ok();
         }
 
         [HttpPost("add-photo")]
         public async Task<ActionResult<UploadPhotoResponse>> UploadPhotoAsync([FromForm] UploadPhotoRequest request)
         {
-            var profile = await _userProfileService.GetAsync(new GetProfileRequest { UserName = request.UserName });
+            string userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var profile = await _userProfileService.GetAsync(new GetProfileRequest { UserName = userName });
             var result = await _photoService.UploadPhotoAsync(request.File);
 
             Photo photo = new Photo
@@ -76,6 +86,7 @@ namespace BeFriendr.Network.UserProfiles.Controllers
             };
 
             await _userProfileService.AddPhotoAsync(profile, photo);
+            await _unitOfWork.SaveAllAsync();
             var photoDto = _mapper.Map<PhotoDto>(photo);
             return Ok(new UploadPhotoResponse { PhotoDto = photoDto });
         }

@@ -13,8 +13,8 @@ namespace BeFriendr.Network.UserProfiles.Interfaces
         Task<UserProfile> GetAsync(GetProfileRequest request);
         Task<IEnumerable<UserProfile>> GetManyAsync(GetManyProfilesRequest request);
         Task<UserProfile> CreateAsync(CreateProfileRequest request);
-        Task<UserProfile> UpdateAsync(UpdateProfileRequest request);
-        Task DeleteAsync(DeleteProfileRequest request);
+        Task<UserProfile> UpdateAsync(string userName, UpdateProfileRequest request);
+        Task DeleteAsync(string userName, DeleteProfileRequest request);
         Task AddPhotoAsync(UserProfile profile, Photo photo);
     }
 }
