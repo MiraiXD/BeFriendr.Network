@@ -14,27 +14,27 @@ namespace BeFriendr.Network.UserProfiles.Exceptions
             {
                 public NotFoundException(string message) : base(message)
                 {
-                    
+
                 }
             }
         }
-         public class Delete
+        public class Delete
         {
             public class NotFoundException : Exception
             {
                 public NotFoundException(string message) : base(message)
                 {
-                    
+
                 }
             }
         }
-         public class Update
+        public class Update
         {
             public class NotFoundException : Exception
             {
                 public NotFoundException(string message) : base(message)
                 {
-                    
+
                 }
             }
             public class AlreadyExistsException : Exception
@@ -44,13 +44,13 @@ namespace BeFriendr.Network.UserProfiles.Exceptions
                 }
             }
         }
-         public class Create
+        public class Create
         {
             public class AlreadyExistsException : Exception
             {
                 public AlreadyExistsException(string message) : base(message)
                 {
-                    
+
                 }
             }
         }

@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using BeFriendr.Common.Messages;
-using BeFriendr.Network.UserProfiles.Interfaces;
 using BeFriendr.Network.UserProfiles.Requests;
+using BeFriendr.Network.UserProfiles.Services;
 using MassTransit;
 
 namespace BeFriendr.Network.Consumers

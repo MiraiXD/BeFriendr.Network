@@ -2,6 +2,7 @@ using BeFriendr.Network;
 using BeFriendr.Network.Authentication;
 using BeFriendr.Network.Authentication.Extensions;
 using BeFriendr.Network.Consumers;
+using BeFriendr.Network.Messages.Extensions;
 using BeFriendr.Network.Middleware;
 using BeFriendr.Network.UserProfiles.Extensions;
 using MassTransit;
@@ -16,8 +17,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddProfileServices(builder.Configuration);
+builder.Services.AddMessageServices(builder.Configuration);
 builder.Services.AddScoped<ExceptionMiddleware>();
 builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddDbContext<DbContext, NetworkDbContext>(options =>
@@ -47,6 +50,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
+app.UseCors(policy=> policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using AutoMapper;
 using BeFriendr.Network.UserProfiles.DTOs;
 using BeFriendr.Network.UserProfiles.Entities;
-using BeFriendr.Network.UserProfiles.Interfaces;
 using BeFriendr.Network.UserProfiles.Requests;
 using BeFriendr.Network.UserProfiles.Responses;
+using BeFriendr.Network.UserProfiles.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +29,7 @@ namespace BeFriendr.Network.UserProfiles.Controllers
         [HttpGet("{userName}", Name = nameof(GetByUserName))]
         public async Task<ActionResult<GetProfileResponse>> GetByUserName([FromRoute] string userName)
         {
-            var profile = await _userProfileService.GetAsync(new GetProfileRequest { UserName = userName });
+            var profile = await _userProfileService.GetAsync(userName);
             if(profile == null) return NotFound();
             var profileDto = _mapper.Map<UserProfileDto>(profile);
             return Ok(new GetProfileResponse { UserProfileDto = profileDto });
@@ -75,7 +71,7 @@ namespace BeFriendr.Network.UserProfiles.Controllers
         public async Task<ActionResult<UploadPhotoResponse>> UploadPhotoAsync([FromForm] UploadPhotoRequest request)
         {
             string userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var profile = await _userProfileService.GetAsync(new GetProfileRequest { UserName = userName });
+            var profile = await _userProfileService.GetAsync(userName);
             var result = await _photoService.UploadPhotoAsync(request.File);
 
             Photo photo = new Photo

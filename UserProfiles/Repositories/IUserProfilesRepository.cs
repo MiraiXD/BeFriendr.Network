@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using BeFriendr.Common;
 using BeFriendr.Network.UserProfiles.Entities;
 
-namespace BeFriendr.Network.UserProfiles.Interfaces
+namespace BeFriendr.Network.UserProfiles.Repositories
 {
     public interface IUserProfilesRepository : ICrudRepository<UserProfile>
     {

@@ -8,7 +8,7 @@ namespace BeFriendr.Network.UserProfiles.Requests
 {
     public class GetProfileRequest
     {
-        [Required]
         public string UserName { get; set; }
+        public int? MyProperty { get; set; }
     }
 }

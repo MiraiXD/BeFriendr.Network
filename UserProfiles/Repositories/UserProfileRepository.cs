@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BeFriendr.Common;
 using BeFriendr.Network.UserProfiles.Entities;
-using BeFriendr.Network.UserProfiles.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BeFriendr.Network.UserProfiles.Repositories

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CloudinaryDotNet.Actions;
 
-namespace BeFriendr.Network.UserProfiles.Interfaces
+namespace BeFriendr.Network.UserProfiles.Services
 {
     public interface IPhotoService
     {

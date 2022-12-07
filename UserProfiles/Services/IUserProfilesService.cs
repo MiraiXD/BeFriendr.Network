@@ -6,10 +6,11 @@ using BeFriendr.Common;
 using BeFriendr.Network.UserProfiles.Entities;
 using BeFriendr.Network.UserProfiles.Requests;
 
-namespace BeFriendr.Network.UserProfiles.Interfaces
+namespace BeFriendr.Network.UserProfiles.Services
 {
     public interface IUserProfilesService
     {
+        Task<UserProfile> GetAsync(string userName);
         Task<UserProfile> GetAsync(GetProfileRequest request);
         Task<IEnumerable<UserProfile>> GetManyAsync(GetManyProfilesRequest request);
         Task<UserProfile> CreateAsync(CreateProfileRequest request);

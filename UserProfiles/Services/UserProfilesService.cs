@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using BeFriendr.Common;
 using BeFriendr.Network.UserProfiles.Entities;
 using BeFriendr.Network.UserProfiles.Exceptions;
-using BeFriendr.Network.UserProfiles.Interfaces;
+using BeFriendr.Network.UserProfiles.Repositories;
 using BeFriendr.Network.UserProfiles.Requests;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +17,14 @@ namespace BeFriendr.Network.UserProfiles.Services
             _userProfilesRepository = userProfilesRepository;
             _mapper = mapper;
         }
+        public async Task<UserProfile> GetAsync(string userName)
+        {
+            return await _userProfilesRepository
+            .AsQueryable()
+            .Where(profile=>profile.UserName==userName)
+            .Include(profile=>profile.Photos)
+            .FirstOrDefaultAsync();   
+        }
         public async Task<UserProfile> GetAsync(GetProfileRequest request)
         {
             return await _userProfilesRepository
@@ -28,7 +32,7 @@ namespace BeFriendr.Network.UserProfiles.Services
             .Where(x => x.UserName == request.UserName)
             .Include(x => x.Photos)
             .FirstOrDefaultAsync();
-        }
+        }        
         public async Task<IEnumerable<UserProfile>> GetManyAsync(GetManyProfilesRequest request)
         {
             var query = _userProfilesRepository.AsQueryable();

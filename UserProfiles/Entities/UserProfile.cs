@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using BeFriendr.Network.Messages.Entities;
 
 namespace BeFriendr.Network.UserProfiles.Entities
 {
@@ -15,7 +16,7 @@ namespace BeFriendr.Network.UserProfiles.Entities
         [MinLength(3)]
         public string UserName { get; set; }
         [Required]
-        // [EmailAddress]
+        [EmailAddress]
         public string Email { get; set; }
         [Required]
         [MaxLength(20)]
@@ -31,5 +32,7 @@ namespace BeFriendr.Network.UserProfiles.Entities
         public string Gender { get; set; }
 
         public virtual ICollection<Photo> Photos { get; set; }
+        public virtual ICollection<Message> MessagesSent {get;set;}
+        public virtual ICollection<Message> MessagesReceived {get;set;}
     }
 }

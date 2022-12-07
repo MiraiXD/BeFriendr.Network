@@ -1,5 +1,4 @@
 using BeFriendr.Network.UserProfiles.Helpers;
-using BeFriendr.Network.UserProfiles.Interfaces;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.Extensions.Options;

@@ -1,18 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BeFriendr.Common;
-using BeFriendr.Network.UserProfiles.Interfaces;
+using BeFriendr.Network.Messages.Repositories;
+using BeFriendr.Network.UserProfiles.Repositories;
 
 namespace BeFriendr.Network
 {
     public class UnitOfWork : BaseUnitOfWork<NetworkDbContext>
     {
-        public IUserProfilesRepository UserProfilesRepository {get;}
-        public UnitOfWork(NetworkDbContext dbContext, IUserProfilesRepository userProfilesRepository) : base(dbContext)
+        public IUserProfilesRepository UserProfilesRepository { get; }
+        public IMessageRepository MessageRepository { get; }
+        public UnitOfWork(NetworkDbContext dbContext, IUserProfilesRepository userProfilesRepository, IMessageRepository messageRepository) : base(dbContext)
         {
-            UserProfilesRepository=userProfilesRepository;
+            UserProfilesRepository = userProfilesRepository;
+            MessageRepository = messageRepository;
         }
     }
 }
