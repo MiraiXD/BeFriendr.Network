@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using BeFriendr.Common;
 using BeFriendr.Network.Common;
@@ -14,8 +15,10 @@ namespace BeFriendr.Network.UserProfiles.Services
     public class RelationshipService : IRelationshipService
     {
         private readonly IRelationshipRepository _relationshipRepository;
-        public RelationshipService(IRelationshipRepository relationshipRepository)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public RelationshipService(IRelationshipRepository relationshipRepository, IHttpContextAccessor httpContextAccessor)
         {
+            _httpContextAccessor = httpContextAccessor;
             _relationshipRepository = relationshipRepository;
 
         }
@@ -70,13 +73,32 @@ namespace BeFriendr.Network.UserProfiles.Services
         public async Task<Relationship> SetRelationshipStatusAsync(string senderUserName, string receiverUserName, string status)
         {
             if (!Enum.TryParse<RelationshipStatus>(status, out RelationshipStatus parsedStatus))
-                throw new RelationshipExceptions.SetStatus.IncorrectStatusValue(status);
+                throw new RelationshipExceptions.SetStatus.IncorrectStatusValueException(status);
 
             var relationship = await _relationshipRepository.AsQueryable()
             .FirstOrDefaultAsync(r => r.SendingProfile.UserName == senderUserName && r.ReceivingProfile.UserName == receiverUserName);
 
             if (relationship == null)
                 throw new RelationshipExceptions.SetStatus.NotFoundException(senderUserName, receiverUserName);
+
+            var loggedInUserName = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (parsedStatus == RelationshipStatus.Canceled)
+            {
+                if (senderUserName != loggedInUserName) throw new RelationshipExceptions.SetStatus.UnauthorizedSenderException(loggedInUserName, relationship, parsedStatus);
+                else if (relationship.Status == RelationshipStatus.Accepted || relationship.Status == RelationshipStatus.Rejected)
+                    throw new RelationshipExceptions.SetStatus.ActionNotAllowed(relationship, parsedStatus);
+
+            }
+            else if (parsedStatus == RelationshipStatus.Read ||
+            parsedStatus == RelationshipStatus.Accepted ||
+            parsedStatus == RelationshipStatus.Rejected ||
+            parsedStatus == RelationshipStatus.Blocked ||
+            parsedStatus == RelationshipStatus.Dismissed)
+            {
+                if (receiverUserName != loggedInUserName)
+                    throw new RelationshipExceptions.SetStatus.UnauthorizedReceiverException(loggedInUserName, relationship, parsedStatus);
+            }
+
 
             relationship.Status = parsedStatus;
             return relationship;

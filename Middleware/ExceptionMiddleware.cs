@@ -11,19 +11,38 @@ namespace BeFriendr.Network.Middleware
             {
                 await next.Invoke(context);
             }
-            catch(RelationshipExceptions.Create.UserDoesNotExistException e)
+            
+            catch (RelationshipExceptions.Create.UserDoesNotExistException e)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 Console.Error.WriteLine($"Could not find user with userName: {e.UserName} while creating a relationship");
                 await context.Response.WriteAsync("Something went wrong");
             }
-            catch(RelationshipExceptions.SetStatus.NotFoundException e)
+            catch(RelationshipExceptions.SetStatus.ActionNotAllowed e)
+            {
+                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                Console.Error.WriteLine($"Cannot set status {e.Status} for relationship with status {e.Relationship.Status}");
+                await context.Response.WriteAsync("Something went wrong");
+            }
+            catch(RelationshipExceptions.SetStatus.UnauthorizedReceiverException e)
+            {
+                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                Console.Error.WriteLine($"User {e.LoggedInUserName} is not the receiver of this relationship");
+                await context.Response.WriteAsync("Something went wrong");
+            }
+            catch(RelationshipExceptions.SetStatus.UnauthorizedSenderException e)
+            {
+                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                Console.Error.WriteLine($"User {e.LoggedInUserName} is not the sender of this relationship");
+                await context.Response.WriteAsync("Something went wrong");
+            }
+            catch (RelationshipExceptions.SetStatus.NotFoundException e)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 Console.Error.WriteLine($"Relationship with sender userName: {e.SenderUserName} and receiver userName: {e.ReceiverUserName} has not been found");
                 await context.Response.WriteAsync("Something went wrong");
             }
-            catch(RelationshipExceptions.SetStatus.IncorrectStatusValue e)
+            catch (RelationshipExceptions.SetStatus.IncorrectStatusValueException e)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 Console.Error.WriteLine("Incorrect status value: " + e.Status);

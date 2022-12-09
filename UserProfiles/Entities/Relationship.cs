@@ -22,11 +22,12 @@ namespace BeFriendr.Network.UserProfiles.Entities
     }
     public enum RelationshipStatus
     {
-        None,
-        Read,
-        Accepted,
-        Rejected,
-        Dismissed,
-        Blocked
+        None, // unread
+        Read, // Receiver has seen the request, didnt do anything yet
+        Accepted, // Receiver accepted request and is now friends with the Sender
+        Rejected, // Receiver rejected and does not want to be friends with the Sender
+        Dismissed, // Receiver wants to ignore the request
+        Blocked, // Receiver wants to block the Sender
+        Canceled // Sender canceled the request after sending - can only cancel if not Accepted or Rejected
     }
 }

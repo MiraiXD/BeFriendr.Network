@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using BeFriendr.Network.UserProfiles.Entities;
 
 namespace BeFriendr.Network.UserProfiles.Exceptions
 {
@@ -30,12 +32,47 @@ namespace BeFriendr.Network.UserProfiles.Exceptions
                     SenderUserName = senderUserName;
                 }
             }
-            public class IncorrectStatusValue : Exception
+            public class IncorrectStatusValueException : Exception
             {
                 public string Status { get; }
-                public IncorrectStatusValue(string status)
+                public IncorrectStatusValueException(string status)
                 {
                     Status = status;
+                }
+            }
+            public class UnauthorizedReceiverException : Exception
+            {
+                public string LoggedInUserName { get; }
+                public Relationship Relationship { get; }
+                public RelationshipStatus ParsedStatus { get; }
+
+                public UnauthorizedReceiverException(string loggedInUserName, Relationship relationship, RelationshipStatus parsedStatus)
+                {
+                    LoggedInUserName = loggedInUserName;
+                    Relationship = relationship;
+                    ParsedStatus = parsedStatus;
+                }
+            }
+            public class UnauthorizedSenderException : Exception
+            {
+                public string LoggedInUserName { get; }
+                public Relationship Relationship { get; }
+                public RelationshipStatus ParsedStatus { get; }
+
+                public UnauthorizedSenderException(string loggedInUserName, Relationship relationship, RelationshipStatus parsedStatus)
+                {
+                    LoggedInUserName = loggedInUserName;
+                    Relationship = relationship;
+                    ParsedStatus = parsedStatus;
+                }
+            }
+            public class ActionNotAllowed : Exception
+            {
+                public Relationship Relationship { get; }
+                public RelationshipStatus Status { get; }
+                public ActionNotAllowed(Relationship relationship, RelationshipStatus status)
+                {
+
                 }
             }
         }
