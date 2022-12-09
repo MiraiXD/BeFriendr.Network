@@ -1,3 +1,4 @@
+using System.Reflection;
 using BeFriendr.Network;
 using BeFriendr.Network.Authentication;
 using BeFriendr.Network.Authentication.Extensions;
@@ -21,8 +22,10 @@ builder.Services.AddCors();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddProfileServices(builder.Configuration);
 builder.Services.AddMessageServices(builder.Configuration);
+builder.Services.AddRelationshipServices(builder.Configuration);
 builder.Services.AddScoped<ExceptionMiddleware>();
 builder.Services.AddScoped<UnitOfWork>();
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddDbContext<DbContext, NetworkDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -37,7 +40,7 @@ builder.Services.AddMassTransit(x =>
                         {
                             e.ConfigureConsumer<AccountCreatedConsumer>(context);
                         });
-                    });                                        
+                    });
                 });
 
 var app = builder.Build();
@@ -50,7 +53,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
-app.UseCors(policy=> policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.UseAuthentication();
 app.UseAuthorization();

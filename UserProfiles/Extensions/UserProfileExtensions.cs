@@ -12,8 +12,7 @@ namespace BeFriendr.Network.UserProfiles.Extensions
             services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));            
             services.AddScoped<IUserProfilesRepository, UserProfilesRepository>();
             services.AddScoped<IUserProfilesService, UserProfilesService>();
-            services.AddScoped<IPhotoService, PhotoService>();
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddScoped<IPhotoService, PhotoService>();            
             return services;
         }
     }

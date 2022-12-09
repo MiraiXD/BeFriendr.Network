@@ -31,8 +31,10 @@ namespace BeFriendr.Network.UserProfiles.Entities
         [Required]
         public string Gender { get; set; }
 
-        public virtual ICollection<Photo> Photos { get; set; }
-        public virtual ICollection<Message> MessagesSent {get;set;}
-        public virtual ICollection<Message> MessagesReceived {get;set;}
+        public  ICollection<Photo> Photos { get; set; }
+        public  ICollection<Message> MessagesSent { get; set; }
+        public  ICollection<Message> MessagesReceived { get; set; }
+        public  ICollection<Relationship> RelationshipsSent { get; set; }
+        public  ICollection<Relationship> RelationshipsReceived { get; set; }
     }
 }

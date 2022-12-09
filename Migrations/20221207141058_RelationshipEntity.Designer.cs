@@ -4,6 +4,7 @@ using BeFriendr.Network;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BeFriendr.Network.Migrations
 {
     [DbContext(typeof(NetworkDbContext))]
-    partial class NetworkDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221207141058_RelationshipEntity")]
+    partial class RelationshipEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,9 +112,6 @@ namespace BeFriendr.Network.Migrations
 
                     b.Property<int?>("BlockedByProfileID")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("DateSent")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("ReceivingProfileID")
                         .HasColumnType("int");

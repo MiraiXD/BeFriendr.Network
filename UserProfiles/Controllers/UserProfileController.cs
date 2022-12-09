@@ -2,6 +2,7 @@ using System.Security.Claims;
 using AutoMapper;
 using BeFriendr.Network.UserProfiles.DTOs;
 using BeFriendr.Network.UserProfiles.Entities;
+using BeFriendr.Network.UserProfiles.Exceptions;
 using BeFriendr.Network.UserProfiles.Requests;
 using BeFriendr.Network.UserProfiles.Responses;
 using BeFriendr.Network.UserProfiles.Services;
@@ -12,7 +13,7 @@ namespace BeFriendr.Network.UserProfiles.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]    
+    [Authorize]
     public class UserProfileController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -30,7 +31,7 @@ namespace BeFriendr.Network.UserProfiles.Controllers
         public async Task<ActionResult<GetProfileResponse>> GetByUserName([FromRoute] string userName)
         {
             var profile = await _userProfileService.GetAsync(userName);
-            if(profile == null) return NotFound();
+            if (profile == null) return NotFound();
             var profileDto = _mapper.Map<UserProfileDto>(profile);
             return Ok(new GetProfileResponse { UserProfileDto = profileDto });
         }
@@ -86,6 +87,7 @@ namespace BeFriendr.Network.UserProfiles.Controllers
             var photoDto = _mapper.Map<PhotoDto>(photo);
             return Ok(new UploadPhotoResponse { PhotoDto = photoDto });
         }
+       
 
     }
 }

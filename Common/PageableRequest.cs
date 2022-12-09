@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 
 namespace BeFriendr.Network.Common
 {
-    public abstract class PageableRequest
+    public class PageableRequest
     {
         public const int MAX_PAGE_SIZE = 50;
         public const int MIN_PAGE_SIZE = 5;
+        //public const PageableRequest Default = new Page
         protected int _pageSize = 10;
         public int PageSize
         {

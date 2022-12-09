@@ -14,8 +14,7 @@ namespace BeFriendr.Network.Messages.Extensions
         {
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IMessageService, MessageService>();
-            services.AddHttpContextAccessor();
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddHttpContextAccessor();            
             return services;
         }
     }

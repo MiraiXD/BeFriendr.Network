@@ -8,10 +8,12 @@ namespace BeFriendr.Network
     {
         public IUserProfilesRepository UserProfilesRepository { get; }
         public IMessageRepository MessageRepository { get; }
-        public UnitOfWork(NetworkDbContext dbContext, IUserProfilesRepository userProfilesRepository, IMessageRepository messageRepository) : base(dbContext)
+        public IRelationshipRepository RelationshipRepository {get;}
+        public UnitOfWork(NetworkDbContext dbContext, IUserProfilesRepository userProfilesRepository, IMessageRepository messageRepository, IRelationshipRepository relationshipRepository) : base(dbContext)
         {
             UserProfilesRepository = userProfilesRepository;
             MessageRepository = messageRepository;
+            RelationshipRepository=relationshipRepository;
         }
     }
 }

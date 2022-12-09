@@ -11,6 +11,7 @@ namespace BeFriendr.Network
     public class NetworkDbContext : DbContext
     {
         public DbSet<UserProfile> Profiles { get; set; }
+        public DbSet<Relationship> Relationships { get; set; }
         public DbSet<Message> Messages { get; set; }
         public NetworkDbContext(DbContextOptions<NetworkDbContext> options) : base(options)
         {
@@ -23,13 +24,23 @@ namespace BeFriendr.Network
             .HasMany(u => u.Photos)
             .WithOne(p => p.UserProfile);
 
+            builder.Entity<Relationship>()
+            .HasOne(relationship => relationship.SendingProfile)
+            .WithMany(profile => profile.RelationshipsSent)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Relationship>()
+            .HasOne(relationship => relationship.ReceivingProfile)
+            .WithMany(profile => profile.RelationshipsReceived)
+            .OnDelete(DeleteBehavior.Restrict);
+
             builder.Entity<Message>()
-            .HasOne(message=>message.SenderProfile)
+            .HasOne(message => message.SenderProfile)
             .WithMany(sender => sender.MessagesSent)
             .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Message>()
-            .HasOne(message=>message.RecipientProfile)
+            .HasOne(message => message.RecipientProfile)
             .WithMany(recipient => recipient.MessagesReceived)
             .OnDelete(DeleteBehavior.Restrict);
         }

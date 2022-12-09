@@ -44,7 +44,7 @@ namespace BeFriendr.Network.UserProfiles.Exceptions
                 }
             }
         }
-        public class Create
+        public class Create        
         {
             public class AlreadyExistsException : Exception
             {
@@ -54,6 +54,7 @@ namespace BeFriendr.Network.UserProfiles.Exceptions
                 }
             }
         }
+        
         public class Photos
         {
             public class Cloudinary
