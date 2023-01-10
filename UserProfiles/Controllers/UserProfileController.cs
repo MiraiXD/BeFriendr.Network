@@ -13,7 +13,7 @@ namespace BeFriendr.Network.UserProfiles.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class UserProfileController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -30,7 +30,7 @@ namespace BeFriendr.Network.UserProfiles.Controllers
         [HttpGet("{userName}", Name = nameof(GetByUserName))]
         public async Task<ActionResult<GetProfileResponse>> GetByUserName([FromRoute] string userName)
         {
-            var profile = await _userProfileService.GetAsync(userName);
+            var profile = await _userProfileService.GetByUserNameAsync(userName);
             if (profile == null) return NotFound();
             var profileDto = _mapper.Map<UserProfileDto>(profile);
             return Ok(new GetProfileResponse { UserProfileDto = profileDto });
@@ -72,7 +72,7 @@ namespace BeFriendr.Network.UserProfiles.Controllers
         public async Task<ActionResult<UploadPhotoResponse>> UploadPhotoAsync([FromForm] UploadPhotoRequest request)
         {
             string userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var profile = await _userProfileService.GetAsync(userName);
+            var profile = await _userProfileService.GetByUserNameAsync(userName);
             var result = await _photoService.UploadPhotoAsync(request.File);
 
             Photo photo = new Photo
@@ -87,7 +87,7 @@ namespace BeFriendr.Network.UserProfiles.Controllers
             var photoDto = _mapper.Map<PhotoDto>(photo);
             return Ok(new UploadPhotoResponse { PhotoDto = photoDto });
         }
-       
+
 
     }
 }

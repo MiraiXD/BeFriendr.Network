@@ -10,7 +10,8 @@ namespace BeFriendr.Network.UserProfiles.Services
 {
     public interface IUserProfilesService
     {
-        Task<UserProfile> GetAsync(string userName);
+        Task<UserProfile> GetByUserNameAsync(string userName);
+        Task<IEnumerable<UserProfile>> GetManyByUserNamesAsync(IEnumerable<string> userNames);
         Task<UserProfile> GetAsync(GetProfileRequest request);
         Task<IEnumerable<UserProfile>> GetManyAsync(GetManyProfilesRequest request);
         Task<UserProfile> CreateAsync(CreateProfileRequest request);

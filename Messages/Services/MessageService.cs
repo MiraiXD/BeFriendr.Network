@@ -30,10 +30,10 @@ namespace BeFriendr.Network.Messages.Services
         public async Task<Message> CreateAsync(CreateMessageRequest request)
         {
             var senderUserName = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var sender = await _userProfilesService.GetAsync(senderUserName);
+            var sender = await _userProfilesService.GetByUserNameAsync(senderUserName);
 
             var recipientUserName = request.RecipientUserName;
-            var recipient = await _userProfilesService.GetAsync(recipientUserName);
+            var recipient = await _userProfilesService.GetByUserNameAsync(recipientUserName);
 
             var message = new Message
             {
@@ -67,8 +67,8 @@ namespace BeFriendr.Network.Messages.Services
         {
             var userName = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var queryable = _messageRepository.AsQueryable()
-            .Where(message=> message.DateRead == null && message.RecipientUserName == userName)
-            .OrderByDescending(message=>message.DateSent);
+            .Where(message => message.DateRead == null && message.RecipientUserName == userName)
+            .OrderByDescending(message => message.DateSent);
 
             return await queryable.ToListAsync();
         }

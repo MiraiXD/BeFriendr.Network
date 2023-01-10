@@ -17,13 +17,19 @@ namespace BeFriendr.Network.UserProfiles.Services
             _userProfilesRepository = userProfilesRepository;
             _mapper = mapper;
         }
-        public async Task<UserProfile> GetAsync(string userName)
+        public async Task<UserProfile> GetByUserNameAsync(string userName)
         {
             return await _userProfilesRepository
             .AsQueryable()
-            .Where(profile=>profile.UserName==userName)
-            .Include(profile=>profile.Photos)
-            .FirstOrDefaultAsync();   
+            .Where(profile => profile.UserName == userName)
+            .Include(profile => profile.Photos)
+            .Include(profile => profile.RelationshipsReceived)
+            .ThenInclude(relationship=>relationship.SendingProfile)
+            .ThenInclude(profile=>profile.Photos)
+            .Include(profile => profile.RelationshipsSent)
+            .ThenInclude(relationship=>relationship.ReceivingProfile)
+            .ThenInclude(profile=>profile.Photos)
+            .FirstOrDefaultAsync();
         }
         public async Task<UserProfile> GetAsync(GetProfileRequest request)
         {
@@ -32,7 +38,7 @@ namespace BeFriendr.Network.UserProfiles.Services
             .Where(x => x.UserName == request.UserName)
             .Include(x => x.Photos)
             .FirstOrDefaultAsync();
-        }        
+        }
         public async Task<IEnumerable<UserProfile>> GetManyAsync(GetManyProfilesRequest request)
         {
             var query = _userProfilesRepository.AsQueryable();
@@ -76,6 +82,18 @@ namespace BeFriendr.Network.UserProfiles.Services
         {
             profile.Photos.Add(photo);
             return Task.CompletedTask;
+        }
+
+        public async Task<IEnumerable<UserProfile>> GetManyByUserNamesAsync(IEnumerable<string> userNames)
+        {
+            return await _userProfilesRepository.AsQueryable()
+            .Where(profile => userNames.Contains(profile.UserName))
+            .ToListAsync();
+            // var queryable = _userProfilesRepository.AsQueryable()
+            // .Join(userNames, profile => profile.UserName, userName=> userName, (profile, userName)=> profile);
+
+            // return await queryable.ToListAsync();
+
         }
     }
 }

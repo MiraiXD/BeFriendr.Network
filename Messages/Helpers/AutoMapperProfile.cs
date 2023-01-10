@@ -14,8 +14,8 @@ namespace BeFriendr.Network.Messages.Helpers
         public AutoMapperProfile()
         {
             CreateMap<Message, MessageDto>()
-            .ForMember(message => message.SenderPhotoUrl, options => options.MapFrom(message => message.SenderProfile.Photos.FirstOrDefault(photo => photo.IsMain).Url))
-            .ForMember(message => message.RecipientPhotoUrl, options => options.MapFrom(message => message.RecipientProfile.Photos.FirstOrDefault(photo => photo.IsMain).Url));
+            .ForMember(message => message.SenderPhotoUrl, options => options.MapFrom(message => message.SenderProfile.GetMainPhotoUrl()))
+            .ForMember(message => message.RecipientPhotoUrl, options => options.MapFrom(message => message.RecipientProfile.GetMainPhotoUrl()));
             CreateMap<CreateMessageRequest, Message>();
         }
     }

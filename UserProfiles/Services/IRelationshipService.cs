@@ -13,7 +13,7 @@ namespace BeFriendr.Network.UserProfiles.Services
         //Task<IEnumerable<Relationship>> GetRelationshipsAsync(string sender = null, string receiver = null, RelationshipStatus? status = null, PageableRequest? pageableRequest = null);        
         Task<IEnumerable<Relationship>> GetReceivedFriendRequestsForUserAsync(string userName, int pageSize, int pageNumber);
         Task<IEnumerable<Relationship>> GetSentFriendRequestsForUserAsync(string userName, int pageSize, int pageNumber);
-        Task<IEnumerable<Relationship>> GetFriendsOfUserAsync(string userName, int pageSize, int pageNumber);
+        Task<IEnumerable<UserProfile>> GetFriendsOfUserAsync(string userName, int pageSize, int pageNumber);
         Task<Relationship> SetRelationshipStatusAsync(string senderUserName, string receiverUserName, string status);
     }
 }

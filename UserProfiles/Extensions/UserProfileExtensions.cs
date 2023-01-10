@@ -13,6 +13,7 @@ namespace BeFriendr.Network.UserProfiles.Extensions
             services.AddScoped<IUserProfilesRepository, UserProfilesRepository>();
             services.AddScoped<IUserProfilesService, UserProfilesService>();
             services.AddScoped<IPhotoService, PhotoService>();            
+            //services.AddHttpContextAccessor();             
             return services;
         }
     }

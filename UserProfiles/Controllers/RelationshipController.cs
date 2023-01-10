@@ -39,8 +39,8 @@ namespace BeFriendr.Network.UserProfiles.Controllers
         public async Task<ActionResult> AddFriendAsync([FromQuery] AddFriendRequest request)
         {
             var userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var sendingProfile = await _userProfileService.GetAsync(userName);
-            var receivingProfile = await _userProfileService.GetAsync(request.UserName);
+            var sendingProfile = await _userProfileService.GetByUserNameAsync(userName);
+            var receivingProfile = await _userProfileService.GetByUserNameAsync(request.UserName);
             if (receivingProfile == null) throw new RelationshipExceptions.Create.UserDoesNotExistException(request.UserName);
 
             var relationship = _relationshipService.CreateRelationship(sendingProfile, receivingProfile);
@@ -64,17 +64,18 @@ namespace BeFriendr.Network.UserProfiles.Controllers
             return Ok(relationshipDtos);
         }
         [HttpGet("friends")]
-        public async Task<ActionResult<RelationshipDto[]>> GetFriends([FromQuery] PageableRequest request)
+        public async Task<ActionResult<UserProfileDto[]>> GetFriends([FromQuery] PageableRequest request)
         {
             var userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var requests = await _relationshipService.GetFriendsOfUserAsync(userName, request.PageSize, request.PageNumber);
-            var relationshipDtos = _mapper.Map<RelationshipDto[]>(requests);
-            return Ok(relationshipDtos);
+            var profiles = await _relationshipService.GetFriendsOfUserAsync(userName, request.PageSize, request.PageNumber);
+            var profileDtos = _mapper.Map<ProfileThumbnailDto[]>(profiles);
+            return Ok(profileDtos);
         }
-        [HttpPut("set-relationship-status")]
+        [HttpPut("set-status")]
         public async Task<ActionResult<RelationshipDto>> SetRelationshipStatus([FromBody] SetRelationshipStatusRequest request)
         {
             var relationship = await _relationshipService.SetRelationshipStatusAsync(request.SenderUserName, request.ReceiverUserName, request.Status);
+            await _unitOfWork.SaveAllAsync();
             return Ok(_mapper.Map<RelationshipDto>(relationship));
         }
     }

@@ -10,6 +10,6 @@ namespace BeFriendr.Network.UserProfiles.DTOs
     {
         public string SenderUserName { get; set; }
         public string ReceiverUserName { get; set; }
-        public RelationshipStatus Status { get; set; }
+        public string Status { get; set; }
     }
 }

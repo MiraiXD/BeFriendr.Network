@@ -16,8 +16,10 @@ namespace BeFriendr.Network.UserProfiles.Services
     {
         private readonly IRelationshipRepository _relationshipRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public RelationshipService(IRelationshipRepository relationshipRepository, IHttpContextAccessor httpContextAccessor)
+        private readonly IUserProfilesService _userProfilesService;
+        public RelationshipService(IRelationshipRepository relationshipRepository, IUserProfilesService userProfilesService, IHttpContextAccessor httpContextAccessor)
         {
+            _userProfilesService = userProfilesService;
             _httpContextAccessor = httpContextAccessor;
             _relationshipRepository = relationshipRepository;
 
@@ -34,16 +36,40 @@ namespace BeFriendr.Network.UserProfiles.Services
             _relationshipRepository.Insert(relationship);
             return relationship;
         }
-
-        public async Task<IEnumerable<Relationship>> GetFriendsOfUserAsync(string userName, int pageSize, int pageNumber)
+        private string GetFriendName(Relationship relationship, string userName)
+        {
+            if (relationship.SendingProfile.UserName == userName) return relationship.ReceivingProfile.UserName;
+            else return relationship.SendingProfile.UserName;
+        }
+        public async Task<IEnumerable<UserProfile>> GetFriendsOfUserAsync(string userName, int pageSize, int pageNumber)
         {
             var queryable = _relationshipRepository.AsQueryable()
             .Where(r => (r.ReceivingProfile.UserName == userName || r.SendingProfile.UserName == userName) && r.Status == RelationshipStatus.Accepted)
-            .OrderBy(r => r, new FriendsAlphabeticComparer(userName))
             .Include(r => r.SendingProfile)
-            .Include(r => r.ReceivingProfile);
+            .Include(r => r.ReceivingProfile)
+            .Select(r=> r.SendingProfile.UserName == userName ? r.ReceivingProfile.UserName : r.SendingProfile.UserName)
+            .OrderBy(userName => userName);
 
-            return await PagedList<Relationship>.CreateAsync(queryable, pageNumber, pageSize);
+            var names = await PagedList<string>.CreateAsync(queryable, pageNumber, pageSize);
+            var friends = await _userProfilesService.GetManyByUserNamesAsync(names);
+
+            return friends;
+            // var queryable = _relationshipRepository.AsQueryable()
+            // .Where(r => (r.ReceivingProfile.UserName == userName || r.SendingProfile.UserName == userName) && r.Status == RelationshipStatus.Accepted)
+            // .OrderBy(r=>r, new FriendsAlphabeticComparer(userName))
+            // .Include(r => r.SendingProfile)
+            // .Include(r => r.ReceivingProfile);
+
+            // var relationships = await PagedList<Relationship>.CreateAsync(queryable, pageNumber, pageSize);            
+            // var names = relationships.Select(r =>
+            // {
+            //     if (r.SendingProfile.UserName == userName) return r.ReceivingProfile.UserName;
+            //     else return r.SendingProfile.UserName;
+            // });
+            // var friends = await _userProfilesService.GetManyByUserNamesAsync(names);
+            // friends = friends.OrderBy(profile => profile.UserName);
+
+            // return friends;
         }
 
         public async Task<IEnumerable<Relationship>> GetReceivedFriendRequestsForUserAsync(string userName, int pageSize, int pageNumber)
@@ -76,6 +102,8 @@ namespace BeFriendr.Network.UserProfiles.Services
                 throw new RelationshipExceptions.SetStatus.IncorrectStatusValueException(status);
 
             var relationship = await _relationshipRepository.AsQueryable()
+            .Include(r => r.SendingProfile)
+            .Include(r => r.ReceivingProfile)
             .FirstOrDefaultAsync(r => r.SendingProfile.UserName == senderUserName && r.ReceivingProfile.UserName == receiverUserName);
 
             if (relationship == null)
